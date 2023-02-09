@@ -1,4 +1,5 @@
 const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 const express = require("express");
 const app = express();
 const dotenv = require("dotenv").config();
@@ -10,6 +11,7 @@ const allRoutes = require("./routes/index");
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
 
 app.use("/api/", allRoutes);
 app.use(notFound);
