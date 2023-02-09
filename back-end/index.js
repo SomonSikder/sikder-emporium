@@ -1,6 +1,7 @@
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const express = require("express");
+const morgan = require("morgan");
 const app = express();
 const dotenv = require("dotenv").config();
 const PORT = process.env.PORT || 8000;
@@ -12,6 +13,7 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(morgan("dev"));
 
 app.use("/api/", allRoutes);
 app.use(notFound);
