@@ -1,7 +1,7 @@
 const User = require("../models/userModel");
 const asyncHandler = require("express-async-handler");
 const { generateToken } = require("../config/jwt");
-
+const validateMongodbId = require("../utils/validateMongodbId");
 // Create User
 const createUser = asyncHandler(async (req, res) => {
   const email = req.body.email;
@@ -50,6 +50,7 @@ const getAllUsers = asyncHandler(async (req, res) => {
 const getUser = asyncHandler(async (req, res) => {
   try {
     const { id } = req.params;
+    validateMongodbId(id);
     const findUser = await User.findById(id);
     res.json(findUser);
   } catch (err) {
@@ -61,6 +62,7 @@ const getUser = asyncHandler(async (req, res) => {
 const deleteUser = asyncHandler(async (req, res) => {
   try {
     const { id } = req.params;
+    validateMongodbId(id);
     const findUser = await User.findByIdAndRemove(id);
     res.json("Deleted User");
   } catch (err) {
@@ -71,9 +73,11 @@ const deleteUser = asyncHandler(async (req, res) => {
 // Update a User
 const updateUser = asyncHandler(async (req, res) => {
   try {
-    const { id } = req.params;
+    const { _id } = req.user;
+    validateMongodbId(_id);
+
     const findUserAndUpdate = await User.findByIdAndUpdate(
-      id,
+      _id,
       {
         firstName: req.body.firstName,
         lastName: req.body.lastName,
@@ -88,6 +92,44 @@ const updateUser = asyncHandler(async (req, res) => {
     throw new Error(err);
   }
 });
+
+// Block User
+const blockUser = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  validateMongodbId(id);
+
+  try {
+    const findUserAndBlock = await User.findByIdAndUpdate(
+      id,
+      {
+        isBlock: true,
+      },
+      { new: true }
+    );
+    res.json("User Blocked");
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+// Unblock User
+const unBlockUser = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  validateMongodbId(id);
+
+  try {
+    const findUserAndUnblock = await User.findByIdAndUpdate(
+      id,
+      {
+        isBlock: false,
+      },
+      { new: true }
+    );
+    res.json("User Unblocked");
+  } catch (error) {
+    throw new Error(error);
+  }
+});
 module.exports = {
   createUser,
   loginUser,
@@ -95,4 +137,6 @@ module.exports = {
   getUser,
   deleteUser,
   updateUser,
+  blockUser,
+  unBlockUser,
 };
