@@ -52,9 +52,20 @@ const updateProduct = asyncHandler(async (req, res) => {
   }
 });
 
+// Delete Product
+const deleteProduct = asyncHandler(async (req, res) => {
+  const id = req.params;
+  try {
+    const findProductAndDelete = await Product.findOneAndDelete(id);
+    res.json("Product Deleted");
+  } catch (error) {
+    throw new Error(error);
+  }
+});
 module.exports = {
   createProduct,
   getAllProducts,
   getSingleProduct,
   updateProduct,
+  deleteProduct,
 };
