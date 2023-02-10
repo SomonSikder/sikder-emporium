@@ -6,12 +6,12 @@ const {
   updateProduct,
   deleteProduct,
 } = require("../controller/productController");
-const { authMiddleware, isAdmin } = require("../middlewares/authMiddleware");
+const { isAdmin, authMiddleware } = require("../middlewares/authMiddleware");
 
-routes.post("/create", createProduct);
-routes.put("/update/:id", updateProduct);
+routes.post("/create", authMiddleware, isAdmin, createProduct);
+routes.put("/update/:id", authMiddleware, isAdmin, updateProduct);
 routes.get("/all-products", getAllProducts);
 routes.get("/single-product/:id", getSingleProduct);
-routes.delete("/delete/:id", deleteProduct);
+routes.delete("/delete/:id", authMiddleware, isAdmin, deleteProduct);
 
 module.exports = routes;

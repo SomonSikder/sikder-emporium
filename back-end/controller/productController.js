@@ -57,11 +57,12 @@ const deleteProduct = asyncHandler(async (req, res) => {
   const id = req.params;
   try {
     const findProductAndDelete = await Product.findOneAndDelete(id);
-    res.json("Product Deleted");
+    res.json(findProductAndDelete);
   } catch (error) {
     throw new Error(error);
   }
 });
+
 module.exports = {
   createProduct,
   getAllProducts,
