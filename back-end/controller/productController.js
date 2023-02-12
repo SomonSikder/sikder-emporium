@@ -18,11 +18,15 @@ const createProduct = asyncHandler(async (req, res) => {
 // Get All Products
 const getAllProducts = asyncHandler(async (req, res) => {
   try {
-    const allProduct = await Product.find({
-      brand: req.query.brand,
-      category: req.query.category,
-    });
-    console.log(req.query.brand, req.query.category);
+    const queryObj = { ...req.query };
+    const excludeFields = ["page", "sort", "limit", "fields"];
+    excludeFields.forEach((el) => delete queryObj[el]);
+
+    let queryStr = JSON.stringify(queryObj);
+    queryStr = queryStr.replace(/\b(gt|gte|lt|lte)\b/g, (rep) => `$${rep}`);
+
+    const query = Product.find(JSON.parse(queryStr));
+    const allProduct = await query;
     res.json(allProduct);
   } catch (error) {
     throw new Error(error);
